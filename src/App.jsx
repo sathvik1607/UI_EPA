@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { UserProvider, useUser } from './context/UserContext'
 import { ToastProvider } from './context/ToastContext'
+import { ScheduleProvider } from './context/ScheduleContext'
 import Layout from './components/Layout/Layout'
 import UserSetup from './components/Setup/UserSetup'
 import Assistant from './pages/Assistant/Assistant'
@@ -17,6 +18,7 @@ function AppRoutes() {
   if (!loggedIn) return <UserSetup />
 
   return (
+    <ScheduleProvider>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route element={<Layout />}>
@@ -30,6 +32,7 @@ function AppRoutes() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ScheduleProvider>
   )
 }
 

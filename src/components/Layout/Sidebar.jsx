@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
-import { getEvents } from '../../services/calendarService'
 import { useUser } from '../../context/UserContext'
+import { useSchedule } from '../../context/ScheduleContext'
 import styles from './Sidebar.module.css'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -34,24 +34,10 @@ function urgencyClass(dateStr) {
 // ── Today's Schedule panel ────────────────────────────────────────────────────
 
 function TodayPanel() {
-  const [events, setEvents] = useState([])
-  const [loaded, setLoaded] = useState(false)
+  const { todayMeetings, loaded } = useSchedule()
 
-  useEffect(() => {
-    let cancelled = false
-    const load = () =>
-      getEvents()
-        .then(data => { if (!cancelled) { setEvents(data); setLoaded(true) } })
-        .catch(() => { if (!cancelled) setLoaded(true) })
-
-    load()
-    const t = setInterval(load, 5 * 60_000) // refresh every 5 min
-    return () => { cancelled = true; clearInterval(t) }
-  }, [])
-
-  const today = events
-    .filter(e => isToday(e.start_time || e.start))
-    .sort((a, b) => new Date(a.start_time || a.start) - new Date(b.start_time || b.start))
+  const today = [...todayMeetings]
+    .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
     .slice(0, 5)
 
   return (
@@ -74,15 +60,14 @@ function TodayPanel() {
       ) : (
         <ul className={styles.eventList}>
           {today.map((e, i) => {
-            const startStr = e.start_time || e.start
-            const urg = urgencyClass(startStr)
+            const urg = urgencyClass(e.scheduled_at)
             return (
               <li
                 key={e.id || i}
                 className={`${styles.eventItem} ${urg ? styles[`urg_${urg}`] : ''}`}
               >
-                <span className={styles.eventTime}>{fmtTime(startStr)}</span>
-                <span className={styles.eventTitle}>{e.title || e.summary || 'Untitled'}</span>
+                <span className={styles.eventTime}>{e.time || fmtTime(e.scheduled_at)}</span>
+                <span className={styles.eventTitle}>{e.title || 'Untitled'}</span>
               </li>
             )
           })}

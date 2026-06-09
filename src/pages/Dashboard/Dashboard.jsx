@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { getEvents } from '../../services/calendarService'
 import { checkHealth } from '../../services/userService'
+import { useUser } from '../../context/UserContext'
 import LoadingSpinner from '../../components/Common/LoadingSpinner'
 import { ToastContext } from '../../context/ToastContext'
 import styles from './Dashboard.module.css'
@@ -58,13 +59,24 @@ export default function Dashboard() {
   const [apiOnline, setApiOnline] = useState(null)
   const [now, setNow]           = useState(new Date())
   const { addToast } = useContext(ToastContext)
+  const { userId } = useUser()
+
+  const fetchEvents = useCallback(() => {
+    getEvents(userId).then(setEvents).catch(() => {})
+  }, [userId])
 
   useEffect(() => {
     Promise.allSettled([
-      getEvents().then(setEvents),
+      getEvents(userId).then(setEvents),
       checkHealth().then(() => setApiOnline(true)).catch(() => setApiOnline(false)),
     ]).finally(() => setLoading(false))
   }, [])
+
+  // Re-fetch when chat creates/updates/cancels anything
+  useEffect(() => {
+    window.addEventListener('pea:refresh-schedule', fetchEvents)
+    return () => window.removeEventListener('pea:refresh-schedule', fetchEvents)
+  }, [fetchEvents])
 
   // Live-tick every 30 s so urgency badges + countdown stay fresh
   useEffect(() => {

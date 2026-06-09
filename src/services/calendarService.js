@@ -3,8 +3,8 @@ import api from './api'
 const toArray = (data) =>
   Array.isArray(data) ? data : data?.events ?? data?.items ?? data?.slots ?? []
 
-export const getEvents = () =>
-  api.get('/calendar/events').then((r) => toArray(r.data))
+export const getEvents = (userId) =>
+  api.get('/calendar/events', { params: { user_id: userId } }).then((r) => toArray(r.data))
 
 export const getFreeSlots = (date, duration) =>
   api

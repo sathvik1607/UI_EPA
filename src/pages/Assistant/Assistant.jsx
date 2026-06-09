@@ -25,11 +25,11 @@ const SCHEDULE_INTENTS = new Set([
 const CONTEXT_INTENTS = new Set(['complete_task'])
 
 export default function Assistant() {
-  const [messages, setMessages] = useLocalStorage('pea_messages', [WELCOME])
+  const { userId, backendOnline } = useUser()
+  const [messages, setMessages] = useLocalStorage(`pea_messages_${userId}`, [WELCOME])
   const [loading, setLoading]   = useState(false)
   const bottomRef               = useRef(null)
   const { addToast }            = useContext(ToastContext)
-  const { userId, backendOnline } = useUser()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -74,13 +74,9 @@ export default function Assistant() {
       }
       setMessages(prev => [...prev, assistantMsg])
 
-      // Trigger background data refreshes based on intent
-      if (data.intent && SCHEDULE_INTENTS.has(data.intent)) {
-        window.dispatchEvent(new CustomEvent('pea:refresh-schedule'))
-      }
-      if (data.intent && CONTEXT_INTENTS.has(data.intent)) {
-        window.dispatchEvent(new CustomEvent('pea:refresh-context'))
-      }
+      // Always refresh schedule — backend intent is always null so the
+      // old intent-check never fired. Dashboard listens for this event.
+      window.dispatchEvent(new CustomEvent('pea:refresh-schedule'))
     } catch (err) {
       addToast(err.message || 'Failed to reach assistant', 'error')
       setMessages(prev => [

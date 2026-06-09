@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
-import { getMeetings, getTasks, cancelItem, completeItem } from '../../services/scheduleService'
+import { useState, useCallback } from 'react'
+import { cancelItem, completeItem } from '../../services/scheduleService'
 import { useUser } from '../../context/UserContext'
+import { useSchedule } from '../../context/ScheduleContext'
 import styles from './Schedule.module.css'
 
 const PRIORITY_LABEL = { low: 'Low', medium: 'Med', high: 'High' }
@@ -174,37 +175,17 @@ function Section({ title, icon, items, emptyMsg, renderCard }) {
 
 export default function Schedule() {
   const { userId } = useUser()
-  const [meetings, setMeetings] = useState([])
-  const [tasks,    setTasks]    = useState([])
-  const [loaded,   setLoaded]   = useState(false)
-  const [error,    setError]    = useState(null)
-
-  const load = useCallback(() => {
-    if (!userId) return
-    setError(null)
-    Promise.all([getMeetings(userId), getTasks(userId)])
-      .then(([m, t]) => { setMeetings(m ?? []); setTasks(t ?? []); setLoaded(true) })
-      .catch(err => { setError(err.message || 'Could not load schedule'); setLoaded(true) })
-  }, [userId])
-
-  useEffect(() => { load() }, [load])
-
-  useEffect(() => {
-    window.addEventListener('pea:refresh-schedule', load)
-    return () => window.removeEventListener('pea:refresh-schedule', load)
-  }, [load])
+  const { meetings, tasks, loaded, error, refresh } = useSchedule()
 
   const handleDelete = useCallback(async (itemId) => {
     await cancelItem(userId, itemId)
-    setMeetings(prev => prev.filter(i => i.id !== itemId))
-    setTasks(prev    => prev.filter(i => i.id !== itemId))
-  }, [userId])
+    refresh()
+  }, [userId, refresh])
 
   const handleComplete = useCallback(async (itemId) => {
     await completeItem(userId, itemId)
-    setMeetings(prev => prev.filter(i => i.id !== itemId))
-    setTasks(prev    => prev.filter(i => i.id !== itemId))
-  }, [userId])
+    refresh()
+  }, [userId, refresh])
 
   const isEmpty = meetings.length === 0 && tasks.length === 0
 
@@ -215,7 +196,7 @@ export default function Schedule() {
           <h1 className={styles.title}>Upcoming Schedule</h1>
           <p className={styles.subtitle}>Your pending tasks and meetings</p>
         </div>
-        <button className={styles.refreshBtn} onClick={load} title="Refresh" disabled={!loaded}>
+        <button className={styles.refreshBtn} onClick={refresh} title="Refresh" disabled={!loaded}>
           <RefreshIcon />
         </button>
       </div>
@@ -227,7 +208,7 @@ export default function Schedule() {
       ) : error ? (
         <div className={styles.errorBox}>
           <p>{error}</p>
-          <button className={styles.retryBtn} onClick={load}>Retry</button>
+          <button className={styles.retryBtn} onClick={refresh}>Retry</button>
         </div>
       ) : isEmpty ? (
         <div className={styles.allEmpty}>
