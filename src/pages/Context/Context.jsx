@@ -18,15 +18,19 @@ function timeAgo(iso) {
 }
 
 const INTENT_LABELS = {
-  create_task:    'Task created',
-  create_meeting: 'Meeting created',
-  update_task:    'Task updated',
-  update_meeting: 'Meeting updated',
-  complete_task:  'Task completed',
-  get_schedule:   'Schedule viewed',
-  get_tasks:      'Tasks viewed',
-  get_context:    'Context viewed',
-  conversational: 'Chat',
+  create_task:          'Task created',
+  create_meeting:       'Meeting created',
+  update_task:          'Task updated',
+  update_meeting:       'Meeting updated',
+  bulk_update_meetings: 'Meetings rescheduled',
+  complete_task:        'Task completed',
+  cancel_task:          'Task cancelled',
+  cancel_meeting:       'Meeting cancelled',
+  cancel_meetings:      'Meetings cancelled',
+  get_schedule:         'Schedule viewed',
+  get_tasks:            'Tasks viewed',
+  get_context:          'Context viewed',
+  conversational:       'Chat',
 }
 
 const IMPORTANCE_COLOR = {

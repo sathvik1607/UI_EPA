@@ -169,6 +169,18 @@
   border: 1px solid rgba(201,162,39,0.2);
 }
 
+.proactiveBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
 .time {
   font-size: 0.7rem;
   color: var(--text-muted);

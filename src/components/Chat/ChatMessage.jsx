@@ -27,7 +27,10 @@ export default function ChatMessage({ message }) {
         </div>
 
         <div className={styles.meta}>
-          {!isUser && message.intent && message.intent !== 'chat' && (
+          {!isUser && message.proactive && (
+            <span className={styles.proactiveBadge}>UPDATE</span>
+          )}
+          {!isUser && !message.proactive && message.intent && message.intent !== 'chat' && (
             <span className={styles.intent}>
               {INTENT_LABELS[message.intent] || message.intent}
             </span>

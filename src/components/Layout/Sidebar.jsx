@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useUser } from '../../context/UserContext'
 import { useSchedule } from '../../context/ScheduleContext'
+import { useNotifications } from '../../context/NotificationContext'
 import styles from './Sidebar.module.css'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -35,10 +36,18 @@ function urgencyClass(dateStr) {
 
 function TodayPanel() {
   const { todayMeetings, loaded } = useSchedule()
+  const { userId } = useUser()
 
   const today = [...todayMeetings]
     .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
     .slice(0, 5)
+
+  function displayTitle(e) {
+    if (e.assigned_to_user_id && e.assigned_to_user_id === userId && e.owner_name) {
+      return `Meeting with ${e.owner_name}`
+    }
+    return e.title || 'Untitled'
+  }
 
   return (
     <section className={styles.panel}>
@@ -67,7 +76,7 @@ function TodayPanel() {
                 className={`${styles.eventItem} ${urg ? styles[`urg_${urg}`] : ''}`}
               >
                 <span className={styles.eventTime}>{e.time || fmtTime(e.scheduled_at)}</span>
-                <span className={styles.eventTitle}>{e.title || 'Untitled'}</span>
+                <span className={styles.eventTitle}>{displayTitle(e)}</span>
               </li>
             )
           })}
@@ -81,9 +90,11 @@ function TodayPanel() {
 // ── Secondary nav links ───────────────────────────────────────────────────────
 
 const NAV = [
-  { to: '/assistant', label: 'Chat',     icon: <ChatIcon /> },
-  { to: '/schedule',  label: 'Schedule', icon: <CalPlusIcon /> },
-  { to: '/context',   label: 'Memory',   icon: <BrainIcon /> },
+  { to: '/assistant',     label: 'Chat',          icon: <ChatIcon /> },
+  { to: '/schedule',      label: 'Schedule',      icon: <CalPlusIcon /> },
+  { to: '/requests',      label: 'Requests',      icon: <RequestsIcon /> },
+  { to: '/notifications', label: 'Notifications', icon: <BellIcon /> },
+  { to: '/context',       label: 'Memory',        icon: <BrainIcon /> },
 ]
 
 // ── Delete Session confirmation ───────────────────────────────────────────────
@@ -130,6 +141,7 @@ function DeleteSessionButton() {
 
 export default function Sidebar() {
   const { user, logout } = useUser()
+  const { unreadCount }  = useNotifications()
   const displayName = user?.name ?? 'User'
   const initials = displayName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 
@@ -161,6 +173,11 @@ export default function Sidebar() {
             >
               <span className={styles.icon}>{item.icon}</span>
               <span className={styles.label}>{item.label}</span>
+              {item.to === '/notifications' && unreadCount > 0 && (
+                <span className={styles.navBadge}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -201,6 +218,12 @@ function BrainIcon() {
 }
 function TrashIcon() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+}
+function RequestsIcon() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="12" y1="7" x2="12" y2="13"/></svg>
+}
+function BellIcon() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
 }
 function LogoutIcon() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>

@@ -9,9 +9,14 @@ const STATUS_LABEL   = { pending: 'Pending', in_progress: 'In Progress', complet
 
 // ── Meeting card ──────────────────────────────────────────────────────────────
 
-function MeetingCard({ item, onDelete, onComplete }) {
+function MeetingCard({ item, userId, onDelete, onComplete }) {
   const [confirming, setConfirming] = useState(false)
   const [busy,       setBusy]       = useState(false)
+
+  const isInvited   = item.assigned_to_user_id && item.assigned_to_user_id === userId
+  const displayTitle = isInvited && item.owner_name
+    ? `Meeting with ${item.owner_name}`
+    : item.title
 
   async function handleDelete() {
     setBusy(true)
@@ -29,7 +34,7 @@ function MeetingCard({ item, onDelete, onComplete }) {
     <div className={`${styles.card} ${styles.type_meeting} ${confirming ? styles.cardConfirming : ''}`}>
       <div className={styles.cardIcon}>📅</div>
       <div className={styles.cardBody}>
-        <span className={styles.cardTitle}>{item.title}</span>
+        <span className={styles.cardTitle}>{displayTitle}</span>
         <div className={styles.cardMeta}>
           {item.date_label && item.time && (
             <span className={styles.metaDate}>{item.date_label} · {item.time}</span>
@@ -171,11 +176,55 @@ function Section({ title, icon, items, emptyMsg, renderCard }) {
   )
 }
 
+// ── Assigned task card (member view — complete only, no cancel) ──────────────
+
+function AssignedTaskCard({ item, onComplete }) {
+  const [busy, setBusy] = useState(false)
+
+  async function handleComplete() {
+    setBusy(true)
+    try { await onComplete(item.id) }
+    finally { setBusy(false) }
+  }
+
+  return (
+    <div className={`${styles.card} ${styles.type_task} ${item.is_overdue ? styles.cardOverdue : ''}`}>
+      <div className={styles.cardIcon}>📌</div>
+      <div className={styles.cardBody}>
+        <span className={styles.cardTitle}>{item.title}</span>
+        <div className={styles.cardMeta}>
+          {item.due_label && (
+            <span className={`${styles.metaDate} ${item.is_overdue ? styles.metaOverdue : ''}`}>
+              {item.due_label}
+            </span>
+          )}
+          {item.priority && (
+            <span className={styles.metaDesc}>{PRIORITY_LABEL[item.priority] ?? item.priority} priority</span>
+          )}
+        </div>
+      </div>
+      <div className={styles.cardRight}>
+        <div className={styles.cardBadges}>
+          <span className={`${styles.badge} ${styles[`status_${item.status}`]}`}>
+            {STATUS_LABEL[item.status] ?? item.status}
+          </span>
+        </div>
+        <div className={styles.actionBtns}>
+          <button className={styles.doneBtn} onClick={handleComplete} disabled={busy} title="Mark done">
+            <DoneIcon />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Schedule() {
-  const { userId } = useUser()
-  const { meetings, tasks, loaded, error, refresh } = useSchedule()
+  const { userId, user } = useUser()
+  const role = user?.role
+  const { meetings, tasks, assignedTasks, loaded, error, refresh } = useSchedule()
 
   const handleDelete = useCallback(async (itemId) => {
     await cancelItem(userId, itemId)
@@ -187,7 +236,8 @@ export default function Schedule() {
     refresh()
   }, [userId, refresh])
 
-  const isEmpty = meetings.length === 0 && tasks.length === 0
+  const isEmpty = meetings.length === 0 && tasks.length === 0 &&
+    (role !== 'member' || assignedTasks.length === 0)
 
   return (
     <div className={styles.page}>
@@ -221,7 +271,7 @@ export default function Schedule() {
             title="Meetings" icon="📅"
             items={meetings} emptyMsg="No upcoming meetings"
             renderCard={item => (
-              <MeetingCard key={item.id} item={item} onDelete={handleDelete} onComplete={handleComplete} />
+              <MeetingCard key={item.id} item={item} userId={userId} onDelete={handleDelete} onComplete={handleComplete} />
             )}
           />
           <Section
@@ -231,6 +281,15 @@ export default function Schedule() {
               <TaskCard key={item.id} item={item} onDelete={handleDelete} onComplete={handleComplete} />
             )}
           />
+          {role === 'member' && (
+            <Section
+              title="Assigned to Me" icon="📌"
+              items={assignedTasks} emptyMsg="No tasks assigned to you"
+              renderCard={item => (
+                <AssignedTaskCard key={item.id} item={item} onComplete={handleComplete} />
+              )}
+            />
+          )}
         </div>
       )}
     </div>

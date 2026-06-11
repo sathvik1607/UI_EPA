@@ -48,6 +48,16 @@
 }
 
 /* ── Content ── */
+.subtitle {
+  font-size: 0.76rem;
+  color: var(--accent-text);
+  background: var(--accent-dim);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin: 0 0 8px;
+  display: inline-block;
+}
+
 .question {
   font-size: 0.82rem;
   color: var(--text-secondary);

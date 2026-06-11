@@ -6,6 +6,9 @@ export const getMeetings = (userId) =>
 export const getTasks = (userId) =>
   api.get(`/tasks/${userId}?status=pending`).then(r => r.data.tasks)
 
+export const getAssignedTasks = (userId) =>
+  api.get(`/tasks/assigned/${userId}`).then(r => r.data.tasks)
+
 export const cancelItem = (userId, itemId) =>
   api.delete(`/items/${itemId}?user_id=${userId}`).then(r => r.data)
 

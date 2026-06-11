@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { UserProvider, useUser } from './context/UserContext'
 import { ToastProvider } from './context/ToastContext'
 import { ScheduleProvider } from './context/ScheduleContext'
+import { NotificationProvider } from './context/NotificationContext'
 import Layout from './components/Layout/Layout'
 import UserSetup from './components/Setup/UserSetup'
 import Assistant from './pages/Assistant/Assistant'
@@ -10,38 +11,54 @@ import Context from './pages/Context/Context'
 import Calendar from './pages/Calendar/Calendar'
 import FreeSlots from './pages/FreeSlots/FreeSlots'
 import Dashboard from './pages/Dashboard/Dashboard'
+import UpdateRequests from './pages/UpdateRequests/UpdateRequests'
+import Notifications from './pages/Notifications/Notifications'
 
 function AppRoutes() {
   const { ready, loggedIn } = useUser()
 
   if (!ready) return null
-  if (!loggedIn) return <UserSetup />
+
+  if (!loggedIn) {
+    return (
+      <Routes>
+        <Route path="/register" element={<UserSetup />} />
+        <Route path="/login"    element={<UserSetup loginMode />} />
+        <Route path="*"         element={<Navigate to="/register" replace />} />
+      </Routes>
+    )
+  }
 
   return (
     <ScheduleProvider>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Navigate to="/assistant" replace />} />
-          <Route path="/assistant"  element={<Assistant />} />
-          <Route path="/schedule"   element={<Schedule />} />
-          <Route path="/context"    element={<Context />} />
-          <Route path="/calendar"   element={<Calendar />} />
-          <Route path="/free-slots" element={<FreeSlots />} />
-          <Route path="/dashboard"  element={<Dashboard />} />
+          <Route index                element={<Navigate to="/assistant" replace />} />
+          <Route path="/assistant"    element={<Assistant />} />
+          <Route path="/schedule"     element={<Schedule />} />
+          <Route path="/context"      element={<Context />} />
+          <Route path="/calendar"     element={<Calendar />} />
+          <Route path="/free-slots"   element={<FreeSlots />} />
+          <Route path="/dashboard"    element={<Dashboard />} />
+          <Route path="/requests"       element={<UpdateRequests />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
+        <Route path="*" element={<Navigate to="/assistant" replace />} />
       </Routes>
-    </BrowserRouter>
     </ScheduleProvider>
   )
 }
 
 export default function App() {
   return (
-    <UserProvider>
-      <ToastProvider>
-        <AppRoutes />
-      </ToastProvider>
-    </UserProvider>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <UserProvider>
+        <ToastProvider>
+          <NotificationProvider>
+            <AppRoutes />
+          </NotificationProvider>
+        </ToastProvider>
+      </UserProvider>
+    </BrowserRouter>
   )
 }
