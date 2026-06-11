@@ -66,11 +66,13 @@ export default function Dashboard() {
   }, [userId])
 
   useEffect(() => {
+    if (!userId) return
+    setLoading(true)
     Promise.allSettled([
       getEvents(userId).then(setEvents),
       checkHealth().then(() => setApiOnline(true)).catch(() => setApiOnline(false)),
     ]).finally(() => setLoading(false))
-  }, [])
+  }, [userId])
 
   // Re-fetch when chat creates/updates/cancels anything
   useEffect(() => {

@@ -12,6 +12,22 @@ import styles from './Assistant.module.css'
 
 const PROACTIVE_POLL = 2_000  // 2s
 
+function AlumnxSvg({ size = 22 }) {
+  const h = Math.round(size * 1.1)
+  return (
+    <svg width={size} height={h} viewBox="0 0 28 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,1 1,26 27,26" stroke="white" strokeWidth="1.8" strokeLinejoin="round"/>
+      <line x1="6.5" y1="20" x2="21.5" y2="20" stroke="white" strokeWidth="1.8"/>
+      <circle cx="14" cy="17" r="3.8" fill="#F97316"/>
+      <line x1="7"    y1="26" x2="5"    y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="10.5" y1="26" x2="9.5"  y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="14"   y1="26" x2="14"   y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="17.5" y1="26" x2="18.5" y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="21"   y1="26" x2="23"   y2="31" stroke="white" strokeWidth="1.3"/>
+    </svg>
+  )
+}
+
 const WELCOME = {
   id: 'welcome',
   role: 'assistant',
@@ -132,20 +148,36 @@ export default function Assistant() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.avatar}>P</div>
-          <div>
-            <h1 className={styles.title}>PEA Assistant</h1>
-            <div className={styles.statusRow}>
-              <span className={`${styles.onlineDot} ${backendOnline === false ? styles.dotOffline : backendOnline === null ? styles.dotChecking : ''}`} />
-              <span className={styles.onlineLabel}>{statusLabel}</span>
+          <AlumnxSvg size={22} />
+          <div className={styles.headerTitles}>
+            <div className={styles.brandRow}>
+              <span className={styles.brandLabel}>ALUMNX</span>
+              <span className={styles.aiLabel}>AI LABS</span>
             </div>
+            <span className={styles.headerSub}>Personal Assistant</span>
           </div>
         </div>
+        <span className={`${styles.statusBadge} ${backendOnline === false ? styles.statusOffline : backendOnline === null ? styles.statusChecking : styles.statusOnline}`}>
+          {backendOnline === false ? 'Offline' : backendOnline === null ? 'Connecting…' : 'Online'}
+        </span>
       </div>
 
       <div className={styles.messages}>
         <div className={styles.spacer} />
-        {messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+        {(() => {
+          const lastAssistantIndex = messages.reduce(
+            (acc, msg, idx) => msg.role === 'assistant' ? idx : acc, -1
+          )
+          return messages.map((msg, index) => (
+            <ChatMessage
+              key={msg.id}
+              message={msg}
+              isLast={index === lastAssistantIndex}
+              onSendOption={index === lastAssistantIndex ? handleSend : undefined}
+              loading={loading}
+            />
+          ))
+        })()}
         {loading && <TypingIndicator />}
         <div ref={bottomRef} />
       </div>

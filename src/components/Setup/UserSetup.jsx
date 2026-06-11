@@ -94,9 +94,11 @@ export default function UserSetup({ loginMode = false }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.card}>
-        <div className={styles.logo}>P</div>
-        <h1 className={styles.title}>Welcome to PEA</h1>
-        <p className={styles.subtitle}>Your Personal Executive Assistant.</p>
+        <div className={styles.logoWrap}>
+          <AlumnxSvg size={44} />
+        </div>
+        <h1 className={styles.title}>ALUMNX AI LABS</h1>
+        <p className={styles.subtitle}>Personal Executive Assistant</p>
 
         {!loginMode ? (
           <>
@@ -121,13 +123,13 @@ export default function UserSetup({ loginMode = false }) {
 
             {tab === 'owner' ? (
               <form className={styles.form} onSubmit={handleOwnerSubmit} noValidate>
-                <label className={styles.label}>Your Name</label>
+                <label className={styles.label}>Team Lead Name</label>
                 <input
                   className={styles.input}
                   type="text"
-                  placeholder="Subhash"
+                  placeholder="e.g. alexjohnson"
                   value={ownerName}
-                  onChange={e => setOwnerName(e.target.value)}
+                  onChange={e => setOwnerName(e.target.value.replace(/\s/g, ''))}
                   autoFocus
                   disabled={loading}
                 />
@@ -135,7 +137,7 @@ export default function UserSetup({ loginMode = false }) {
                 <input
                   className={styles.input}
                   type="text"
-                  placeholder="ABC Logistics"
+                  placeholder="e.g. Acme Technologies"
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
                   disabled={loading}
@@ -149,6 +151,9 @@ export default function UserSetup({ loginMode = false }) {
                   onChange={e => setOwnerPwd(e.target.value)}
                   disabled={loading}
                 />
+                <p className={styles.warning}>
+                  ⚠️ Your name and password cannot be changed after registration. Choose carefully.
+                </p>
                 {error && <p className={styles.error}>{error}</p>}
                 {slowHint && <p className={styles.hint}>Waking up server, please wait…</p>}
                 <button type="submit" className={styles.btn} disabled={loading}>
@@ -157,13 +162,13 @@ export default function UserSetup({ loginMode = false }) {
               </form>
             ) : (
               <form className={styles.form} onSubmit={handleMemberSubmit} noValidate>
-                <label className={styles.label}>Your Name</label>
+                <label className={styles.label}>Member Name</label>
                 <input
                   className={styles.input}
                   type="text"
-                  placeholder="Siva"
+                  placeholder="e.g. jordanlee"
                   value={memberName}
-                  onChange={e => setMemberName(e.target.value)}
+                  onChange={e => setMemberName(e.target.value.replace(/\s/g, ''))}
                   autoFocus
                   disabled={loading}
                 />
@@ -188,6 +193,9 @@ export default function UserSetup({ loginMode = false }) {
                     <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
                 </select>
+                <p className={styles.warning}>
+                  ⚠️ Your name and password cannot be changed after registration. Choose carefully.
+                </p>
                 {error && <p className={styles.error}>{error}</p>}
                 {slowHint && <p className={styles.hint}>Waking up server, please wait…</p>}
                 <button type="submit" className={styles.btn} disabled={loading}>
@@ -196,12 +204,13 @@ export default function UserSetup({ loginMode = false }) {
               </form>
             )}
 
-            <p className={styles.note}>
-              Already have an account?{' '}
-              <button type="button" className={styles.linkBtn} onClick={() => { setError(''); navigate('/login') }}>
-                Sign in
-              </button>
-            </p>
+            <button
+              type="button"
+              className={styles.btnOutline}
+              onClick={() => { setError(''); navigate('/login') }}
+            >
+              Already have an account? Sign In →
+            </button>
           </>
         ) : (
           <>
@@ -210,7 +219,7 @@ export default function UserSetup({ loginMode = false }) {
               <input
                 className={styles.input}
                 type="text"
-                placeholder="sathvik"
+                placeholder="e.g. alex.johnson"
                 value={loginName}
                 onChange={e => setLoginName(e.target.value)}
                 autoFocus
@@ -231,14 +240,34 @@ export default function UserSetup({ loginMode = false }) {
                 {loading ? 'Signing in…' : 'Sign In →'}
               </button>
             </form>
-            <p className={styles.note}>
-              <button type="button" className={styles.linkBtn} onClick={() => { setError(''); navigate('/register') }}>
-                ← Back to registration
-              </button>
-            </p>
+            <button
+              type="button"
+              className={styles.btnOutline}
+              onClick={() => { setError(''); navigate('/register') }}
+            >
+              ← New here? Register
+            </button>
           </>
         )}
       </div>
     </div>
+  )
+}
+
+// ── AlumnX brand SVG ──────────────────────────────────────────────────────────
+
+function AlumnxSvg({ size = 44 }) {
+  const h = Math.round(size * 1.1)
+  return (
+    <svg width={size} height={h} viewBox="0 0 28 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,1 1,26 27,26" stroke="white" strokeWidth="1.8" strokeLinejoin="round"/>
+      <line x1="6.5" y1="20" x2="21.5" y2="20" stroke="white" strokeWidth="1.8"/>
+      <circle cx="14" cy="17" r="3.8" fill="#F97316"/>
+      <line x1="7"    y1="26" x2="5"    y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="10.5" y1="26" x2="9.5"  y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="14"   y1="26" x2="14"   y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="17.5" y1="26" x2="18.5" y2="31" stroke="white" strokeWidth="1.3"/>
+      <line x1="21"   y1="26" x2="23"   y2="31" stroke="white" strokeWidth="1.3"/>
+    </svg>
   )
 }

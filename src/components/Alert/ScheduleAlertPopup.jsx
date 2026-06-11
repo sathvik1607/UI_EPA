@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useScheduleAlerts } from '../../hooks/useScheduleAlerts'
 import styles from './ScheduleAlertPopup.module.css'
 
@@ -10,6 +10,9 @@ export default function ScheduleAlertPopup() {
 
   const item      = queue[0]
   const isMeeting = item._type === 'meeting'
+
+  // Reset busy whenever the queue advances to a new item
+  useEffect(() => { setBusy(false) }, [item._alertKey])
 
   const handleComplete = async () => {
     setBusy(true)

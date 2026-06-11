@@ -26,8 +26,14 @@
   letter-spacing: 0.02em;
   transition: var(--transition);
   border-radius: var(--radius-sm);
-  margin: 6px 2px;
+  margin: 4px 2px;
   position: relative;
+  /* Ensure ≥ 44px touch target */
+  min-height: 52px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .link:hover {
@@ -43,6 +49,14 @@
   color: var(--accent-text);
 }
 
+/* Icon wrapper — needed for badge positioning */
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .icon {
   display: flex;
   align-items: center;
@@ -52,6 +66,23 @@
 
 .link.active .icon {
   filter: drop-shadow(0 0 4px var(--accent));
+}
+
+/* Notification badge */
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: var(--accent);
+  color: #1A1B0D;
+  border-radius: 99px;
+  padding: 1px 5px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1.5;
+  min-width: 16px;
+  text-align: center;
+  pointer-events: none;
 }
 
 .label {

@@ -18,26 +18,31 @@
   gap: 0;
 }
 
-.logo {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: var(--accent);
-  color: #1A1B0D;
-  font-weight: 800;
-  font-size: 1.4rem;
+.logoWrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: 0.14em;
   margin: 0 0 8px;
   text-align: center;
+}
+
+.warning {
+  font-size: 0.76rem;
+  color: var(--accent-text);
+  background: var(--accent-dim);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 2px 0;
+  line-height: 1.5;
 }
 
 .subtitle {
@@ -114,6 +119,24 @@
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.btnOutline {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 0;
+  border-radius: var(--radius-md, 10px);
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.btnOutline:hover {
+  background: var(--accent-dim);
+  transform: translateY(-1px);
 }
 
 .hint {

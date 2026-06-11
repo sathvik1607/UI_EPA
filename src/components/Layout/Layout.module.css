@@ -1,6 +1,7 @@
 .root {
   display: flex;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -13,8 +14,9 @@
 .main {
   flex: 1;
   min-width: 0;
-  padding-bottom: var(--bottom-nav-height);
+  overflow-y: auto;
   overflow-x: hidden;
+  padding-bottom: var(--bottom-nav-height);
 }
 
 /* Bottom nav visible on mobile */

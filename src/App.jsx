@@ -13,6 +13,7 @@ import FreeSlots from './pages/FreeSlots/FreeSlots'
 import Dashboard from './pages/Dashboard/Dashboard'
 import UpdateRequests from './pages/UpdateRequests/UpdateRequests'
 import Notifications from './pages/Notifications/Notifications'
+import Tasks from './pages/Tasks/Tasks'
 
 function AppRoutes() {
   const { ready, loggedIn } = useUser()
@@ -36,6 +37,7 @@ function AppRoutes() {
           <Route index                element={<Navigate to="/assistant" replace />} />
           <Route path="/assistant"    element={<Assistant />} />
           <Route path="/schedule"     element={<Schedule />} />
+          <Route path="/tasks"        element={<Tasks />} />
           <Route path="/context"      element={<Context />} />
           <Route path="/calendar"     element={<Calendar />} />
           <Route path="/free-slots"   element={<FreeSlots />} />
