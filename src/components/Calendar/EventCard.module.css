@@ -56,9 +56,10 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 6px;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .meta {
@@ -111,6 +112,17 @@
 .moreAttendees {
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+@media (max-width: 479px) {
+  .card { flex-wrap: wrap; }
+
+  .attendees {
+    flex-basis: 100%;
+    order: 3;
+    padding-left: calc(52px + 14px);
+    margin-top: -4px;
+  }
 }
 
 @keyframes fadeIn {

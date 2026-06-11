@@ -36,16 +36,22 @@ desktop.ini
 
 # ── Audio / media files in project root (use public/sounds/ instead) ─────────
 dragon-studio-wow-423653.mp3
+.*mp3
 *.wav
+cool_notification.mp3
+dragon-studio-wow-423653.mp3
 
 # ── Claude local settings & plans ────────────────────────────────────────────
 .claude/settings.local.json
 .claude/plans/
 .claude/projects/
 .claude/memory/
+CLAUDE.md
+action_plan.md
 
 # ── Project structure docs (auto-generated) ───────────────────────────────────
 PROJECT_STRUCTURE.md
 project_structure.md
 PROJECTSTRUCTURE.md
 debugging.md
+gitbranchplan.md

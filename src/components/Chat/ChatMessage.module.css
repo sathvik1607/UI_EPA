@@ -147,6 +147,48 @@
 
 .textList li { margin: 2px 0; }
 
+/* ── Quick reply chips ────────────────────────────────────────────────────── */
+
+.chipsScroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 0 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chipsScroll::-webkit-scrollbar { display: none; }
+
+.chipBtn {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 22px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition);
+  line-height: 1.4;
+}
+
+.chipBtn:hover,
+.chipBtn:active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.chipBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 /* ── Meta row ─────────────────────────────────────────────────────────────── */
 
 .meta {
@@ -167,6 +209,18 @@
   background: var(--accent-dim);
   color: var(--accent-text);
   border: 1px solid rgba(201,162,39,0.2);
+}
+
+.proactiveBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
 }
 
 .time {

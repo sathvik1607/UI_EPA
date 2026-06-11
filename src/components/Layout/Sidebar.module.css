@@ -23,31 +23,47 @@
   flex-shrink: 0;
 }
 
-.logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: var(--accent);
-  color: #1A1B0D;
-  font-weight: 800;
-  font-size: 1rem;
+.brandText {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .brandName {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.14em;
+  line-height: 1;
 }
 
-.brandSub {
-  font-size: 0.65rem;
+.brandAIRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.brandAILine {
+  flex: 1;
+  height: 1px;
+  background: var(--text-muted);
+  opacity: 0.4;
+}
+
+.brandAI {
+  font-size: 0.52rem;
+  font-weight: 700;
   color: var(--text-muted);
-  margin-top: 1px;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.agentLabel {
+  font-size: 0.6rem;
+  color: #F97316;
+  font-weight: 500;
+  letter-spacing: 0.03em;
 }
 
 /* ── Scrollable content ──────────────────────────────────────────────────────*/
@@ -94,49 +110,15 @@
   color: var(--error);
 }
 
-/* ── Today's events ──────────────────────────────────────────────────────────*/
+/* ── Today's summary ─────────────────────────────────────────────────────────*/
 
-.eventList {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.eventItem {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 5px;
+.summaryLine {
   font-size: 0.78rem;
   color: var(--text-secondary);
-  transition: background 0.15s;
+  padding: 2px 6px 4px;
+  font-weight: 500;
+  line-height: 1.5;
 }
-
-.eventItem:hover { background: var(--bg-hover); }
-
-.eventTime {
-  flex-shrink: 0;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  width: 46px;
-}
-
-.eventTitle {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* urgency tints */
-.urg_now    { color: var(--error) !important; }
-.urg_urgent { color: var(--warning) !important; }
-.urg_now .eventTime,
-.urg_urgent .eventTime { color: currentColor !important; }
 
 /* skeleton loader */
 .skeleton { display: flex; flex-direction: column; gap: 5px; padding: 4px 6px; }
@@ -288,6 +270,19 @@
 }
 
 .label { flex: 1; }
+
+.navBadge {
+  margin-left: auto;
+  background: var(--accent);
+  color: #1A1B0D;
+  border-radius: 99px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.6;
+  min-width: 18px;
+  text-align: center;
+}
 
 /* ── Delete Session zone ─────────────────────────────────────────────────────*/
 

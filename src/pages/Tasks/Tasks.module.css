@@ -4,7 +4,7 @@
   animation: fadeIn 0.3s ease forwards;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 @media (min-width: 768px) {
@@ -49,43 +49,53 @@
 
 .refreshBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── Sections ── */
-.sections {
+/* ── Tabs ── */
+.tabs {
   display: flex;
-  flex-direction: column;
-  gap: 28px;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
-.section {}
-
-.sectionHeader {
-  display: flex;
+.tab {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.sectionIcon { font-size: 1rem; }
-
-.sectionTitle {
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
   font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin: 0;
+  font-weight: 500;
+  transition: var(--transition);
+  min-height: 32px;
 }
 
-.sectionCount {
-  margin-left: 4px;
-  background: var(--bg-tertiary);
-  color: var(--text-muted);
-  border-radius: 99px;
-  padding: 1px 8px;
-  font-size: 0.72rem;
+.tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tabActive {
+  background: var(--accent-dim);
+  color: var(--accent-text);
   font-weight: 600;
 }
 
+.tabBadge {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border-radius: 99px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.tabActive .tabBadge {
+  background: rgba(201, 162, 39, 0.35);
+  color: var(--accent-text);
+}
+
+/* ── List ── */
 .list {
   display: flex;
   flex-direction: column;
@@ -107,8 +117,9 @@
 
 .card:hover { background: var(--bg-hover); }
 
-.type_meeting { border-left-color: var(--accent); }
 .type_task    { border-left-color: var(--info, #60a5fa); }
+.cardOverdue  { border-left-color: var(--error) !important; }
+.cardCompleted { opacity: 0.65; }
 
 .cardIcon {
   font-size: 1.1rem;
@@ -140,9 +151,6 @@
 }
 
 .metaDate,
-.metaLoc,
-.metaDur,
-.metaAttendees,
 .metaDesc {
   font-size: 0.76rem;
   color: var(--text-muted);
@@ -151,20 +159,6 @@
 .metaOverdue {
   color: var(--error);
   font-weight: 600;
-}
-
-.cardOverdue {
-  border-left-color: var(--error) !important;
-}
-
-.badgeToday {
-  background: rgba(248, 113, 113, 0.15);
-  color: var(--error);
-}
-
-.badgeTomorrow {
-  background: var(--accent-dim);
-  color: var(--accent-text);
 }
 
 .cardRight {
@@ -208,8 +202,8 @@
 }
 
 .deleteBtn:hover:not(:disabled) {
-  color: var(--error, #f87171);
-  background: var(--error-dim, rgba(248,113,113,0.12));
+  color: var(--error);
+  background: var(--error-dim);
 }
 
 .doneBtn:disabled,
@@ -218,10 +212,8 @@
   cursor: not-allowed;
 }
 
-/* Inline confirm row */
-.cardConfirming {
-  border-left-color: var(--error, #f87171) !important;
-}
+/* Inline confirm */
+.cardConfirming { border-left-color: var(--error) !important; }
 
 .confirmRow {
   display: flex;
@@ -232,7 +224,7 @@
 
 .confirmLabel {
   font-size: 0.75rem;
-  color: var(--error, #f87171);
+  color: var(--error);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -251,12 +243,12 @@
 }
 
 .confirmYes {
-  background: var(--error-dim, rgba(248,113,113,0.15));
-  color: var(--error, #f87171);
+  background: var(--error-dim);
+  color: var(--error);
 }
 
 .confirmYes:hover:not(:disabled) {
-  background: var(--error, #f87171);
+  background: var(--error);
   color: #fff;
 }
 
@@ -290,13 +282,6 @@
 .status_scheduled   { background: var(--info-dim); color: var(--info); }
 
 /* ── Empty / loading ── */
-.empty {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-style: italic;
-  padding: 6px 4px;
-}
-
 .allEmpty {
   display: flex;
   flex-direction: column;

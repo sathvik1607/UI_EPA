@@ -14,7 +14,14 @@ export function UserProvider({ children }) {
   const [ready, setReady]                 = useState(false)
 
   useEffect(() => {
-    // Never auto-restore — always require login on page load
+    const saved = localStorage.getItem('pea_user')
+    if (saved) {
+      try {
+        const data = JSON.parse(saved)
+        setUser(data)
+        setLoggedIn(true)
+      } catch { /* corrupted entry — ignore */ }
+    }
     setReady(true)
     checkHealth()
       .then(() => setBackendOnline(true))
@@ -23,17 +30,14 @@ export function UserProvider({ children }) {
 
   const login = useCallback(async (username, password) => {
     const trimmed = username.trim()
-    const email   = `${trimmed.toLowerCase().replace(/\s+/g, '.')}@pea.local`
     let data
     try {
       data = await loginUser(trimmed, password)
     } catch (err) {
       const status = err?.response?.status
-      if (status === 401) {
-        throw new Error('Incorrect password.')
-      }
-      // /auth/login not built yet or any other error — fall back to register/get
-      data = await registerUser(trimmed, email, password)
+      if (status === 404) throw new Error('No account found with that name.')
+      if (status === 401) throw new Error('Incorrect password.')
+      throw new Error('Login failed. Please try again.')
     }
     localStorage.setItem('pea_user', JSON.stringify(data))
     setUser(data)
@@ -41,13 +45,33 @@ export function UserProvider({ children }) {
     return data
   }, [])
 
+  // Used after owner/member registration — sets state from the registration response
+  // without a second login call.
+  const loginWithData = useCallback((data) => {
+    localStorage.setItem('pea_user', JSON.stringify(data))
+    setUser(data)
+    setLoggedIn(true)
+  }, [])
+
   const logout = useCallback(() => {
+    localStorage.removeItem('pea_user')
     setUser(null)
     setLoggedIn(false)
   }, [])
 
   return (
-    <UserContext.Provider value={{ user, userId: user?.id ?? null, loggedIn, backendOnline, ready, login, logout }}>
+    <UserContext.Provider value={{
+      user,
+      userId:   user?.id   ?? null,
+      role:     user?.role ?? null,
+      teamId:   user?.team_id ?? null,
+      loggedIn,
+      backendOnline,
+      ready,
+      login,
+      loginWithData,
+      logout,
+    }}>
       {children}
     </UserContext.Provider>
   )

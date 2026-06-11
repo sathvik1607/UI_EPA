@@ -11,11 +11,29 @@ const INTENT_LABELS = {
   greeting:   'Greeting',
 }
 
-export default function ChatMessage({ message }) {
+// Extract "Keep both", "Reschedule", "Cancel" from numbered list lines
+function extractNumberedItems(text) {
+  if (!text) return []
+  const items = []
+  for (const line of text.split('\n')) {
+    const m = line.match(/^\d+\.\s+(.+)/)
+    if (m) items.push(m[1].trim())
+  }
+  return items
+}
+
+export default function ChatMessage({ message, isLast, onSendOption, loading }) {
   const isUser = message.role === 'user'
   const time   = new Date(message.timestamp).toLocaleTimeString([], {
     hour: '2-digit', minute: '2-digit',
   })
+
+  // Compute quick reply options — only for last assistant message with numbered list
+  const displayOptions = (!isUser && isLast && onSendOption)
+    ? extractNumberedItems(message.text).slice(0, 6)
+    : []
+
+  const suppressNumbered = displayOptions.length > 0
 
   return (
     <div className={`${styles.wrapper} ${isUser ? styles.user : styles.assistant}`}>
@@ -23,11 +41,31 @@ export default function ChatMessage({ message }) {
 
       <div className={styles.content}>
         <div className={styles.bubble}>
-          <MessageText text={message.text} isUser={isUser} />
+          <MessageText text={message.text} isUser={isUser} suppressNumbered={suppressNumbered} />
         </div>
 
+        {/* Quick reply chips — display label, send ordinal "1"/"2"/"3" */}
+        {displayOptions.length > 0 && (
+          <div className={styles.chipsScroll}>
+            {displayOptions.map((label, i) => (
+              <button
+                key={i}
+                className={styles.chipBtn}
+                disabled={loading}
+                onClick={() => !loading && onSendOption(String(i + 1))}
+                title={`Send: ${i + 1}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className={styles.meta}>
-          {!isUser && message.intent && message.intent !== 'chat' && (
+          {!isUser && message.proactive && (
+            <span className={styles.proactiveBadge}>UPDATE</span>
+          )}
+          {!isUser && !message.proactive && message.intent && message.intent !== 'chat' && (
             <span className={styles.intent}>
               {INTENT_LABELS[message.intent] || message.intent}
             </span>
@@ -45,10 +83,8 @@ export default function ChatMessage({ message }) {
 }
 
 // ── Text renderer ─────────────────────────────────────────────────────────────
-// Handles: fenced code blocks, inline code, **bold**, *italic*, bullet lists,
-// numbered lists, and plain newlines.
 
-function MessageText({ text, isUser }) {
+function MessageText({ text, isUser, suppressNumbered }) {
   if (!text) return null
 
   if (isUser) {
@@ -77,7 +113,7 @@ function MessageText({ text, isUser }) {
       {segments.map((seg, i) =>
         seg.type === 'code'
           ? <CodeBlock key={i} lang={seg.lang} code={seg.content} />
-          : <ProseBlock key={i} text={seg.content} />
+          : <ProseBlock key={i} text={seg.content} suppressNumbered={suppressNumbered} />
       )}
     </div>
   )
@@ -92,8 +128,7 @@ function CodeBlock({ lang, code }) {
   )
 }
 
-// Render a prose segment: bold, italic, inline code, bullet/numbered lists, newlines
-function ProseBlock({ text }) {
+function ProseBlock({ text, suppressNumbered }) {
   const lines = text.split('\n')
   const output = []
   let i = 0
@@ -122,6 +157,10 @@ function ProseBlock({ text }) {
       while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
         items.push(lines[i].replace(/^\d+\.\s/, ''))
         i++
+      }
+      if (suppressNumbered) {
+        // Chips are rendered outside the bubble — skip to prevent duplication
+        continue
       }
       output.push(
         <ol key={i} className={styles.textList}>
