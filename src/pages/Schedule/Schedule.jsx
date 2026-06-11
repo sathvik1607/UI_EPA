@@ -5,7 +5,7 @@ import { useSchedule } from '../../context/ScheduleContext'
 import styles from './Schedule.module.css'
 
 const PRIORITY_LABEL = { low: 'Low', medium: 'Med', high: 'High' }
-const STATUS_LABEL   = { pending: 'Pending', in_progress: 'In Progress', completed: 'Done', cancelled: 'Cancelled' }
+const STATUS_LABEL   = { pending: 'Pending', in_progress: 'In Progress', completed: 'Done', cancelled: 'Cancelled', scheduled: 'Scheduled' }
 
 // ── Meeting card ──────────────────────────────────────────────────────────────
 

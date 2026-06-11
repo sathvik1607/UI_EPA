@@ -105,7 +105,7 @@
 
 .eventItem {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 6px;
   padding: 3px 6px;
   border-radius: 5px;
@@ -127,9 +127,9 @@
 .eventTitle {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 /* urgency tints */

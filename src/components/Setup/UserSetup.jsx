@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useUser } from '../../context/UserContext'
 import styles from './UserSetup.module.css'
 
@@ -7,7 +7,19 @@ export default function UserSetup() {
   const [password, setPassword] = useState('')
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
+  const [slowHint, setSlowHint] = useState(false)
+  const hintTimer               = useRef(null)
   const { login }               = useUser()
+
+  useEffect(() => {
+    if (loading) {
+      hintTimer.current = setTimeout(() => setSlowHint(true), 4000)
+    } else {
+      clearTimeout(hintTimer.current)
+      setSlowHint(false)
+    }
+    return () => clearTimeout(hintTimer.current)
+  }, [loading])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -52,6 +64,7 @@ export default function UserSetup() {
             disabled={loading}
           />
           {error && <p className={styles.error}>{error}</p>}
+          {slowHint && <p className={styles.hint}>Waking up server, please wait…</p>}
           <button type="submit" className={styles.btn} disabled={loading}>
             {loading ? 'Signing in…' : 'Sign In →'}
           </button>
